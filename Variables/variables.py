@@ -7,3 +7,5 @@ nav_btn_customer   = '(//p[text()="Customers"])[2]'
 customers_btn_create = '//a[@aria-label="Create"]'
 
 table_row = '//table//tbody//tr'
+
+# btn_refresh = '//button[@aria-label="Refresh"]'

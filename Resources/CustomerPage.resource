@@ -36,3 +36,6 @@ Verify Customer Is Added
    END
    Should Contain     ${customer["name"]}    ${fetched_name}
    Log To Console    ${fetched_name}
+
+# Refresh Current Page
+#     Click Button    ${}
