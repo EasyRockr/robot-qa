@@ -4,10 +4,10 @@ import string
 
 class CustomLibrary:
 
-    def get_random_users(self):
+    def get_random_customers(self):
         response = requests.get("https://jsonplaceholder.typicode.com/users", verify=False)
-        users = response.json()
-        for i in users:
+        customers = response.json()
+        for i in customers:
             i["birthday"] = self.get_random_birthday()
             i["password"] = self.generate_password()
             i["address"]["stateAbbr"] = (
@@ -15,8 +15,8 @@ class CustomLibrary:
                 + str(i["address"]["suite"][0])
                 + str(i["address"]["city"][0])
             )
-        print(users)
-        return users
+        print(customers)
+        return customers
     
     def get_random_birthday(self):
         return (
