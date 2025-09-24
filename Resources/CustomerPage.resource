@@ -30,14 +30,13 @@ Create Customer
 Verify Created Customer Is Added
     [Arguments]    ${customer}
     Verify Customer Name Is Added    ${customer}
-    # Verify Customer Email Is Added    ${customer}
+    Verify Customer Email Is Added    ${customer}
     
 Verify Customer Name Is Added
     [Arguments]    ${customer}
     Go To Customers Page
     Wait Until Element Is Not Visible    (${table_row})[1]//td//div[contains(@class,"MuiAvatar-colorDefault") and text()]
     Wait Until Element Is Visible    (${table_row})[1]//td//div[contains(@class,"MuiAvatar-colorDefault") and text()]
-    Click Element    ((${table_row})[1]//td)[3]
     ${fetched_name}    Get Text     ((${table_row})[1]//td)[2]    
     IF    "\\n" in """${fetched_name}"""
          ${fetched_name}    Evaluate    """${fetched_name}""".replace("\\n","")[1:]
@@ -55,3 +54,5 @@ Verify Customer Email Is Added
     ${expected_email}   Get From Dictionary    ${customer}    email
     Should Be Equal     ${expected_email}    ${fetched_email}
     Log To Console      ${fetched_email}
+
+
