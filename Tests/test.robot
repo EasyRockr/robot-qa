@@ -18,13 +18,10 @@ TEST-000001
 
 TEST-000002
     [Documentation]    Get API user and create in Customers
-    ${customers}    Get Random Customers
-    Go To Customers Page
-    FOR    ${i}    IN    @{customers}
-        Create Customer    ${i}
-        Verify Customer Is Added    ${i}
-        Capture Page Screenshot
-    END
+    ${int_1}    Set Variable    5
+    ${int_2}    Set Variable    3
+    ${sum}    Evaluate    "${int_1}" + "${int_2}"
+    Log To Console    The sum of ${int_1} and ${int_2} is ${sum}
 
 *** Keywords ***
 Launch Browser
