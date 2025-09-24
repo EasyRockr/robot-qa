@@ -8,4 +8,9 @@ customers_btn_create = '//a[@aria-label="Create"]'
 
 table_row = '//table//tbody//tr'
 
-# btn_refresh = '//button[@aria-label="Refresh"]'
+URL = 'https://marmelab.com/react-admin-demo'
+USERNAME = 'demo'
+PASSWORD = 'demo'
+
+btn_Refresh = '//button[@aria-label="Refresh"]'
+loading_icon = '//a[@aria-label="Refresh"]'
