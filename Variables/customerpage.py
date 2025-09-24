@@ -1,3 +1,5 @@
+customers_created_email = '//input[@name="email"]'
+
 customers_txt_firstname = '//input[@name="first_name"]'
 customers_txt_lastname  = '//input[@name="last_name"]'
 customers_txt_email     = '//input[@name="email"]'
@@ -9,3 +11,5 @@ customers_txt_zipcode   = '//input[@name="zipcode"]'
 customers_txt_password  = '//input[@name="password"]'
 customers_txt_confirmpassword  = '//input[@name="confirm_password"]'
 customers_btn_save      = '//button[normalize-space()="Save"]'
+
+

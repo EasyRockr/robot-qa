@@ -19,11 +19,12 @@ TEST-000001
 TEST-000002
     [Documentation]    Get API user and create in Customers
     ${customers}    Get Random Customers
-    Go To Customers Page
+    
     FOR    ${i}    IN    @{customers}
+        Go To Customers Page
         Create Customer    ${i}
-        Verify Customer Is Added    ${i}
-        Capture Page Screenshot
+        Verify Created Customer Is Added    ${i}
+        # Capture Page Screenshot
     END
 
 *** Keywords ***
