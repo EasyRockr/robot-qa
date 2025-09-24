@@ -1,31 +1,44 @@
+# Library/CustomLibrary.py
 import requests
 import random
 import string
+from datetime import datetime
 
 class CustomLibrary:
-
     def get_random_customers(self, limit=5):
-        response = requests.get("https://jsonplaceholder.typicode.com/users", verify=False)
-        customers = response.json()
-        first_five_customers = customers[:limit]
-        for i in first_five_customers:
-            i["birthday"] = self.get_random_birthday()
-            i["password"] = self.generate_password()
-            i["address"]["stateAbbr"] = (
-                str(i["address"]["street"][0])
-                + str(i["address"]["suite"][0])
-                + str(i["address"]["city"][0])
+        resp = requests.get("https://jsonplaceholder.typicode.com/users", timeout=10)
+        resp.raise_for_status()
+        customers = resp.json()[:limit]
+
+        for c in customers:
+            c["birthday"] = self.get_random_birthday()     # mmddyyyy
+            c["password"] = self.generate_password()
+            c["address"]["stateAbbr"] = (
+                str(c["address"]["street"][0])
+                + str(c["address"]["suite"][0])
+                + str(c["address"]["city"][0])
             )
-        print(first_five_customers)
-        return first_five_customers
-    
+        print(customers)
+        return customers
+
     def get_random_birthday(self):
+        # returns mmddyyyy as required by your verifier
         return (
-            str(random.randint(1, 12)).zfill(2)
-            + str(random.randint(1, 28)).zfill(2)
-            + str(random.randint(1999, 2006))
+            str(random.randint(1, 12)).zfill(2) +
+            str(random.randint(1, 28)).zfill(2) +
+            str(random.randint(1999, 2006))
         )
-    
+
+    def format_birthday(self, birthday_str):
+        """Accepts 'YYYY-MM-DD' or 'mmddyyyy'; returns 'mmddyyyy'."""
+        s = str(birthday_str).strip()
+        if "-" in s:
+            dt = datetime.strptime(s, "%Y-%m-%d")
+            return dt.strftime("%m%d%Y")
+        if len(s) == 8 and s.isdigit():
+            return s
+        raise ValueError(f"Unsupported birthday format: {s}")
+
     def generate_password(self, length=8):
         chars = string.ascii_letters + string.digits + "!@#$%"
-        return ''.join(random.choice(chars) for _ in range(length))
+        return "".join(random.choice(chars) for _ in range(length))

@@ -1,8 +1,7 @@
 *** Settings ***
 Library   SeleniumLibrary
 Library    Collections
-Variables   ../Variables/customerpage.py
-Variables   ../Variables/variables.py
+
 Resource    App.resource
 
 *** Keywords ***
@@ -26,6 +25,44 @@ Create Customer
     Input Text    ${customers_txt_confirm_password}    ${customer["password"]}
     Click Button    ${customers_btn_save}
     Wait Until Page Contains    Customer created
+
+Verify Customer Input
+    [Arguments]    ${user}
+    ${first_name}    Get Element Attribute    ${customers_txt_firstname}    value
+    Log To Console    ${first_name}
+    Should Be Equal As Strings    ${user["name"].split(" ")[0]}       ${first_name}
+    Log To Console    First Name Input Is Correct
+
+    ${second_name}    Get Element Attribute    ${customers_txt_lastname}    value
+    Log To Console    ${second_name}
+    Should Be Equal As Strings    ${user["name"].split(" ")[1]}   ${second_name}
+    Log To Console    Second Name Input Is Correct
+
+    ${email}    Get Element Attribute    ${customers_txt_email}    value
+    Log To Console    ${email}
+    Should Be Equal As Strings    ${user["email"]}   ${email}
+    Log To Console    Email Input Is Correct
+
+    ${birthday}    Get Element Attribute    ${customers_txt_birthday}    value
+    Log To Console    ${birthday}
+    ${birthday}=    Format Birthday    ${birthday}
+    Should Be Equal As Strings    ${user["birthday"]}    ${birthday}
+    Log To Console    Birthday Input Is Correct
+
+    ${address}    Get Element Attribute    ${customers_txt_address}    value
+    Log To Console    ${address}
+    ${city}    Get Element Attribute    ${customers_txt_city}    value
+    Log To Console    ${city}
+    ${stateAbbr}    Get Element Attribute    ${customers_txt_stateAbbr}    value
+    Log To Console    ${stateAbbr}
+    ${zipcode}    Get Element Attribute    ${customers_txt_zipcode}    value
+    Log To Console    ${zipcode}
+    ${password}    Get Element Attribute    ${customers_txt_password}    value
+    Log To Console    ${password}
+    ${confirm_password}    Get Element Attribute    ${customers_txt_confirm_password}    value
+    Log To Console    ${confirm_password}
+
+# Verify Customer Data Suite Against Customer Input
 
 Verify Created Customer Is Added
     [Arguments]    ${customer}

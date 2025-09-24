@@ -23,7 +23,7 @@ TEST-000002
     FOR    ${i}    IN    @{customers}
         Go To Customers Page
         Create Customer    ${i}
-        Verify Created Customer Is Added    ${i}
+        Verify Customer Input    ${i}
         # Capture Page Screenshot
     END
 

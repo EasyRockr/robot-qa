@@ -2,6 +2,8 @@
 Library    SeleniumLibrary
 Library    ../Library/CustomLibrary.py
 Variables  ../Variables/variables.py
+Variables   ../Variables/customerpage.py
+Variables   ../Variables/variables.py
 
 *** Keywords ***
 Refresh Current Page
