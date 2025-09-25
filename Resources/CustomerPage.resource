@@ -8,7 +8,9 @@ Resource   App.resource
 *** Keywords ***
 Go To Customers Page
     Click Element    ${nav_btn_customer}
-    Wait Until Element Is Visible    ${table_row}
+    Wait Until Element Is Visible    ${table_row}    20s
+    Run Keyword And Ignore Error    Wait Until Page Does Not Contain Element    ${loading_icon}    20s
+
 
 Create Customer
     [Arguments]    ${customer}
@@ -129,8 +131,6 @@ Clear And Input Text
     Press Keys       ${locator}    COMMAND+a    DELETE
     Input Text       ${locator}    ${value}
 
-
-
 # TASK4
 Get Table Row Data
     [Documentation]    TASK 4: For each row in the table, print user data in the required format.
@@ -146,8 +146,23 @@ Get Table Row Data
         ${orders}=            Get Text    //table//tbody//tr[${r}]//td[4]
         ${total_spent}=       Get Text    //table//tbody//tr[${r}]//td[5]
         ${latest_purchase}=   Get Text    //table//tbody//tr[${r}]//td[6]
-        ${news}=              Get Element Attribute    //table//tbody//tr[${r}]//td[7]//*[name()="svg"]    aria-label
-        ${segment}=           Get Text    //table//tbody//tr[${r}]//td[8]
+
+        # News icon may not exist on some rows — check first
+        ${has_news}=    Run Keyword And Return Status    Page Should Contain Element    //table//tbody//tr[${r}]//td[7]//*[name()="svg"]
+        IF    ${has_news}
+            ${news}=    Get Element Attribute    //table//tbody//tr[${r}]//td[7]//*[name()="svg"]    aria-label
+        ELSE
+            ${news}=    Set Variable    No
+        END
+
+        # Collect segment chips (0..n), join with commas
+        @{chip_nodes}=    Get WebElements    //table//tbody//tr[${r}]//td[8]//span[contains(@class,"MuiChip-label")]
+        ${segments}=       Create List
+        FOR    ${chip}    IN    @{chip_nodes}
+            ${txt}=    Get Text    ${chip}
+            Append To List    ${segments}    ${txt}
+        END
+        ${segment}=    Catenate    SEPARATOR=,     @{segments}
 
         Log To Console    ====== User ${r} ======
         Log To Console    Name: ${name}
@@ -157,6 +172,5 @@ Get Table Row Data
         Log To Console    Latest purchase: ${latest_purchase}
         Log To Console    News: ${news}
         Log To Console    Segment: ${segment}
-        Log To Console    [Continue with all available fields]
         Log To Console    --------------------------------------------
     END
