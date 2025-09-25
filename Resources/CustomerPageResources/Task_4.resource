@@ -4,7 +4,8 @@ Resource   ../CustomerPageResources/CustomerPage.resource
 
 *** Keywords ***
 Get Simple Name
-    [Documentation]    Get simple name from table row, handling possible variations in structure
+    [Documentation]    Helper to get simple name from table row, handling possible variations
+    [Arguments]    ${r}
     ${target}    Set Variable    ${name_fallback_selector % ${r}}
     ${has}       Run Keyword And Return Status    Page Should Contain Element    ${target}
     IF    ${has}
@@ -17,7 +18,7 @@ Get Simple Name
     RETURN    ${name}
 
 Get Table Row Data
-    [Documentation]    Log table data for each row (Name, Last seen, Orders, etc.)
+    [Documentation]   Iterate through each table row and print user details to console
     Go To Customers Page
     Wait Until Element Is Visible    ${table_row}
 
@@ -54,5 +55,4 @@ Get Table Row Data
         Log To Console    Latest purchase: ${latest_purchase}
         Log To Console    News: ${news}
         Log To Console    Segment: ${segment}
-        Log To Console    --------------------------------------------
     END

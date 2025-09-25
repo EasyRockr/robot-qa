@@ -21,7 +21,7 @@ Get Expense Report
         ${amount}        Run Keyword If    '${clean_txt}' == ''    Set Variable    0    ELSE    Convert To Number    ${clean_txt}
 
         IF    ${amount} > 0
-            Log To Console    ${counter}. ${name}: ${amount_txt}
+            Log To Console    \n${counter}. ${name}: ${amount_txt}
             ${counter}       Evaluate    ${counter} + 1
         END
 
