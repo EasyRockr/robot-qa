@@ -1,0 +1,25 @@
+# ```
+# __pycache__/
+# *.pyc
+# *.pyo
+# *.pyd
+# *.egg-info/
+# .env
+# .venv/
+# venv/
+
+# # Robot/Selenium artifacts
+# Results/
+# output.xml
+# log.html
+# report.html
+# selenium-screenshot-*.png
+
+# # IDE/OS
+# .vscode/
+# .idea/
+# .DS_Store
+# Thumbs.db
+# *.swp
+# *.swo
+# ```

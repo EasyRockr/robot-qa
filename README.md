@@ -1,10 +1,8 @@
-# robot-qa
-
 # Robot‑QA: React Admin Demo – Automation Suite
 
 This repository contains Robot Framework tests that automate the **React Admin demo** customer workflow end‑to‑end — from creating customers using API data to verifying table displays, updating existing rows, logging row data, and analyzing total customer spending.
 
-> **Status:** All tasks (1–5) and all detailed requirements (items 1–10) are accomplished as specified.
+> **Status:** All tasks (1–5) and all detailed requirements are accomplished as specified.
 
 ---
 
@@ -52,7 +50,7 @@ robot-qa/
 │  ├─ variables.py                   # URL/credentials
 │  └─ customerpage.py                # Centralized selectors (XPath)
 ├─ Tests/
-│  └─ test.robot / customer_page_test.robot
+│  └─ customer_page_test.robot
 └─ Results/                          # Run artifacts (ignored by .gitignore)
 ```
 
@@ -61,9 +59,6 @@ robot-qa/
 ## How to Run
 
 ```bash
-# From repo root
-robot -d Results ./Tests/test.robot
-# or
 robot -d Results ./Tests/customer_page_test.robot
 ```
 
@@ -177,4 +172,4 @@ Thumbs.db
 
 ---
 
-**Author:** Automation Suite generated and validated for the React Admin demo customer workflows.
+**Franz Rainier Adriano, IT Intern:** Automation Suite generated and validated for the React Admin demo customer workflows.
