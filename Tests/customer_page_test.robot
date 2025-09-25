@@ -12,6 +12,7 @@ Suite Teardown   Close All Browsers
 TEST-000001
    [Documentation]    TASK 1 & TASK 2: Login to React Admin demo site, add 5 random customers, verify data.
    Login User
+   Sleep    5s
    # In case of a "Google Password Breach Warning" prompt, kindly use either (whichever works best po): Sleep    10s OR     Wait Until Element Is Visible    ${dashboard_hdr}    10s
    TASK 1: ADD FIRST 5 CUSTOMERS
    TASK 2: VERIFY TABLE DISPLAY
