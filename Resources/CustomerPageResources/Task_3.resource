@@ -39,5 +39,8 @@ Clear And Input Text
     [Documentation]    Clear existing text and input new text into a field
     [Arguments]    ${locator}    ${value}
     Click Element    ${locator}
-    Press Keys       ${locator}    COMMAND+a    DELETE
+    # For Windows/Linux, use CTRL instead of COMMAND
+    Press Keys       ${locator}    CTRL+a    DELETE
+    # For MacOS, use COMMAND instead of CTRL
+    # Press Keys       ${locator}    COMMAND+a    DELETE
     Input Text       ${locator}    ${value}
