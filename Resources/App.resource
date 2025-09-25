@@ -1,13 +1,13 @@
 *** Settings ***
 Library    SeleniumLibrary
-Library    ../Library/CustomLibrary.py
+Library    String
+Library    Collections
 Variables  ../Variables/variables.py
-Variables   ../Variables/customerpage.py
-Variables   ../Variables/variables.py
+
 
 *** Keywords ***
 Refresh Current Page
+    [Documentation]    Refresh the current page and wait until loading is complete
     Click Button    ${btn_refresh}
     Wait Until Element Is Visible    ${loading_icon}
     Wait Until Element Is Not Visible    ${loading_icon}
-    Log To Console    ${USERNAME}

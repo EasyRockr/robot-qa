@@ -1,19 +1,16 @@
-login_txt_username = '//input[@name="username"]'
-login_txt_password = '//input[@name="password"]'
-login_btn_submit   = '//button[@type="submit"]'
-
-dashboard_hdr      = '//p[text()="Dashboard"]'
-nav_btn_customer   = '(//p[text()="Customers"])[2]'
-customers_btn_create = '//a[@aria-label="Create"]'
-
-table_row = '//table//tbody//tr'
-
+#GLOBAL VARIABLES
 URL = 'https://marmelab.com/react-admin-demo'
 USERNAME = 'demo'
 PASSWORD = 'demo'
 
-btn_refresh =   '//button[@aria-label="Refresh"]'
-loading_icon    =   '//div[span[contains(@class,"MuiCircularProgress-root")]]'
-table_selector  =   '//table//tbody//tr[1]//td[2]'
+login_txt_username  = '//input[@name="username"]'
+login_txt_password  = '//input[@name="password"]'
+login_btn_submit    = '//button[@type="submit"]'
+
+dashboard_hdr       = '//p[text()="Dashboard"]'
+
+btn_refresh         = '//button[@aria-label="Refresh"]'
+loading_icon        = '//div[span[contains(@class,"MuiCircularProgress-root")]]'
+table_selector      = '//table//tbody//tr[1]//td[2]'
 
 
