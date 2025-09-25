@@ -1,28 +1,21 @@
-# Library/CustomLibrary.py
 import requests
 import random
 import string
 from datetime import datetime
 
 class CustomLibrary:
-    def get_random_customers(self, limit=5):
+    def get_random_customers(self, start=0, limit=5):
         resp = requests.get("https://jsonplaceholder.typicode.com/users", timeout=10)
         resp.raise_for_status()
-        customers = resp.json()[:limit]
-
+        customers = resp.json()[start:start+limit]  # <-- grab 6..10 with start=5, limit=5
         for c in customers:
-            c["birthday"] = self.get_random_birthday()     # mmddyyyy
+            c["birthday"] = self.get_random_birthday()
             c["password"] = self.generate_password()
-            c["address"]["stateAbbr"] = (
-                str(c["address"]["street"][0])
-                + str(c["address"]["suite"][0])
-                + str(c["address"]["city"][0])
-            )
-        print(customers)
+            c["address"]["stateAbbr"] = c["address"]["street"][0] + c["address"]["suite"][0] + c["address"]["city"][0]
         return customers
 
+
     def get_random_birthday(self):
-        # returns mmddyyyy as required by your verifier
         return (
             str(random.randint(1, 12)).zfill(2) +
             str(random.randint(1, 28)).zfill(2) +

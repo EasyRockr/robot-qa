@@ -13,3 +13,10 @@ customers_txt_confirmpassword  = '//input[@name="confirm_password"]'
 customers_btn_save      = '//button[normalize-space()="Save"]'
 
 
+
+last_seen_selector  =   '//table//tbody//tr[1]//td[3]'
+orders_selector = '//table//tbody//tr[1]//td[4]'
+total_spent_selector = '//table//tbody//tr[1]//td[5]'
+latest_purchase_selector    =   '//table//tbody//tr[1]//td[6]'
+news_selector   =   '//table//tbody//tr[1]//td[7]//*[name()="svg"]'
+segment_selector    =   '//table//tbody//tr[1]//td[8]'

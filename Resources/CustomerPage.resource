@@ -1,95 +1,162 @@
 *** Settings ***
-Library   SeleniumLibrary
+Library    SeleniumLibrary
+Library    ../Library/CustomLibrary.py
 Library    Collections
-
-Resource    App.resource
+Variables  ../Variables/customerpage.py
+Resource   App.resource
 
 *** Keywords ***
 Go To Customers Page
-   Click Element    ${nav_btn_customer}
-   Wait Until Element Is Visible    ${table_row}
+    Click Element    ${nav_btn_customer}
+    Wait Until Element Is Visible    ${table_row}
 
 Create Customer
     [Arguments]    ${customer}
     Click Element    ${customers_btn_create}
     Wait Until Element Is Visible    ${customers_txt_firstname}
     Input Text    ${customers_txt_firstname}    ${customer["name"].split(" ")[0]}
-    Input Text    ${customers_txt_lastname}    ${customer["name"].split(" ")[1]}
-    Input Text    ${customers_txt_email}    ${customer["email"]}
-    Input Text    ${customers_txt_birthday}    ${customer["birthday"]}
-    Input Text    ${customers_txt_address}    ${customer["address"]["street"]} ${customer["address"]["suite"]}
-    Input Text    ${customers_txt_city}    ${customer["address"]["city"]}
-    Input Text    ${customers_txt_stateabbr}    ${customer["address"]["stateAbbr"]}
-    Input Text    ${customers_txt_zipcode}    ${customer["address"]["zipcode"]}
-    Input Text    ${customers_txt_password}    ${customer["password"]}
+    Input Text    ${customers_txt_lastname}     ${customer["name"].split(" ")[1]}
+    Input Text    ${customers_txt_email}        ${customer["email"]}
+    Input Text    ${customers_txt_birthday}     ${customer["birthday"]}
+    Input Text    ${customers_txt_address}      ${customer["address"]["street"]} ${customer["address"]["suite"]}
+    Input Text    ${customers_txt_city}         ${customer["address"]["city"]}
+    Input Text    ${customers_txt_stateAbbr}    ${customer["address"]["stateAbbr"]}
+    Input Text    ${customers_txt_zipcode}      ${customer["address"]["zipcode"]}
+    Input Text    ${customers_txt_password}     ${customer["password"]}
     Input Text    ${customers_txt_confirm_password}    ${customer["password"]}
     Click Button    ${customers_btn_save}
     Wait Until Page Contains    Customer created
 
 Verify Customer Input
-    [Arguments]    ${user}
+    [Arguments]    ${customer}
     ${first_name}    Get Element Attribute    ${customers_txt_firstname}    value
-    Log To Console    ${first_name}
-    Should Be Equal As Strings    ${user["name"].split(" ")[0]}       ${first_name}
-    Log To Console    First Name Input Is Correct
+    Should Be Equal As Strings    ${customer["name"].split(" ")[0]}    ${first_name}
 
-    ${second_name}    Get Element Attribute    ${customers_txt_lastname}    value
-    Log To Console    ${second_name}
-    Should Be Equal As Strings    ${user["name"].split(" ")[1]}   ${second_name}
-    Log To Console    Second Name Input Is Correct
+    ${second_name}   Get Element Attribute    ${customers_txt_lastname}     value
+    Should Be Equal As Strings    ${customer["name"].split(" ")[1]}    ${second_name}
 
-    ${email}    Get Element Attribute    ${customers_txt_email}    value
-    Log To Console    ${email}
-    Should Be Equal As Strings    ${user["email"]}   ${email}
-    Log To Console    Email Input Is Correct
+    ${email}         Get Element Attribute    ${customers_txt_email}        value
+    Should Be Equal As Strings    ${customer["email"]}    ${email}
 
-    ${birthday}    Get Element Attribute    ${customers_txt_birthday}    value
-    Log To Console    ${birthday}
-    ${birthday}=    Format Birthday    ${birthday}
-    Should Be Equal As Strings    ${user["birthday"]}    ${birthday}
-    Log To Console    Birthday Input Is Correct
+    ${birthday}      Get Element Attribute    ${customers_txt_birthday}     value
+    ${birthday}=     Format Birthday    ${birthday}
+    Should Be Equal As Strings    ${customer["birthday"]}    ${birthday}
 
-    ${address}    Get Element Attribute    ${customers_txt_address}    value
-    Log To Console    ${address}
-    ${city}    Get Element Attribute    ${customers_txt_city}    value
-    Log To Console    ${city}
-    ${stateAbbr}    Get Element Attribute    ${customers_txt_stateAbbr}    value
-    Log To Console    ${stateAbbr}
-    ${zipcode}    Get Element Attribute    ${customers_txt_zipcode}    value
-    Log To Console    ${zipcode}
-    ${password}    Get Element Attribute    ${customers_txt_password}    value
-    Log To Console    ${password}
+    ${address}       Get Element Attribute    ${customers_txt_address}      value
+    Should Be Equal As Strings    ${customer["address"]["street"]} ${customer["address"]["suite"]}    ${address}
+
+    ${city}          Get Element Attribute    ${customers_txt_city}         value
+    Should Be Equal As Strings    ${customer["address"]["city"]}    ${city}
+
+    ${stateAbbr}     Get Element Attribute    ${customers_txt_stateAbbr}    value
+    Should Be Equal As Strings    ${customer["address"]["stateAbbr"]}    ${stateAbbr}
+
+    ${zipcode}       Get Element Attribute    ${customers_txt_zipcode}      value
+    Should Be Equal As Strings    ${customer["address"]["zipcode"]}    ${zipcode}
+
+    ${password}      Get Element Attribute    ${customers_txt_password}     value
+    Should Be Equal As Strings    ${customer["password"]}    ${password}
+
     ${confirm_password}    Get Element Attribute    ${customers_txt_confirm_password}    value
-    Log To Console    ${confirm_password}
+    Should Be Equal As Strings    ${customer["password"]}    ${confirm_password}
 
-# Verify Customer Data Suite Against Customer Input
-
-Verify Created Customer Is Added
-    [Arguments]    ${customer}
-    Verify Customer Name Is Added    ${customer}
-    Verify Customer Email Is Added    ${customer}
-    
-Verify Customer Name Is Added
-    [Arguments]    ${customer}
+    &{verified_customer}=    Create Dictionary
+    ...    first_name=${first_name}
+    ...    last_name=${second_name}
+    ...    email=${email}
+    ...    birthday=${birthday}
+    ...    address=${address}
+    ...    city=${city}
+    ...    stateAbbr=${stateAbbr}
+    ...    zipcode=${zipcode}
+    ...    password=${password}
+    ...    confirm_password=${confirm_password}
+    Append To List    ${Verified_Customers}    ${verified_customer}
+    Set Suite Variable    ${Verified_Customers}
     Go To Customers Page
-    Wait Until Element Is Not Visible    (${table_row})[1]//td//div[contains(@class,"MuiAvatar-colorDefault") and text()]
-    Wait Until Element Is Visible    (${table_row})[1]//td//div[contains(@class,"MuiAvatar-colorDefault") and text()]
-    ${fetched_name}    Get Text     ((${table_row})[1]//td)[2]    
-    IF    "\\n" in """${fetched_name}"""
-         ${fetched_name}    Evaluate    """${fetched_name}""".replace("\\n","")[1:]
+    Refresh Current Page
+
+Open Customer By Index
+    [Arguments]    ${index}
+    ${locator}=    Set Variable    //table//tbody//tr[${index}]//td[2]//a
+    Click Element    ${locator}
+    Wait Until Element Is Visible    ${customers_txt_firstname}
+
+Verify Customer Data
+    [Arguments]    ${customer}    ${index}
+    Go To Customers Page
+    Wait Until Element Is Visible    ${table_row}
+    Open Customer By Index    ${index}
+    Verify Customer Input    ${customer}
+
+
+
+Update Customer Table
+    [Arguments]    ${customers}
+    ${total}=    Get Length    ${customers}
+    ${end}=      Evaluate    ${total} + 1
+
+    FOR    ${index}    IN RANGE    1    ${end}
+        ${customer_index}=    Evaluate    ${index} - 1
+        ${customer}=          Set Variable    ${customers}[${customer_index}]
+
+        Go To Customers Page
+        Open Customer By Index    ${index + 5}    
+        Wait Until Element Is Visible    ${customers_txt_firstname}
+
+        Clear And Input Text    ${customers_txt_firstname}  ${customer["name"].split(" ")[0]}
+        Clear And Input Text    ${customers_txt_lastname}   ${customer["name"].split(" ")[1]}
+        Clear And Input Text    ${customers_txt_email}    ${customer["email"]}
+        Input Text    ${customers_txt_birthday}    ${customer["birthday"]}
+        Clear And Input Text    ${customers_txt_address}    ${customer["address"]["street"]} ${customer["address"]["suite"]}
+        Clear And Input Text    ${customers_txt_city}    ${customer["address"]["city"]}
+        Clear And Input Text    ${customers_txt_stateAbbr}    ${customer["address"]["stateAbbr"]}
+        Clear And Input Text    ${customers_txt_zipcode}    ${customer["address"]["zipcode"]}
+        Clear And Input Text    ${customers_txt_password}    ${customer["password"]}
+        Clear And Input Text    ${customers_txt_confirm_password}     ${customer["password"]}
+
+        Click Button    ${customers_btn_save}
+        Wait Until Page Contains    Customer updated
+
+        Verify Customer Data    ${customer}    ${index + 5}
     END
-    Should Contain     ${customer["name"]}    ${fetched_name}
-    Log To Console    ${fetched_name}
 
 
-Verify Customer Email Is Added
-    [Arguments]    ${customer}
+Clear And Input Text
+    [Arguments]    ${locator}    ${value}
+    Click Element    ${locator}
+    # macOS
+    Press Keys       ${locator}    COMMAND+a    DELETE
+    Input Text       ${locator}    ${value}
+
+
+
+# TASK4
+Get Table Row Data
+    [Documentation]    TASK 4: For each row in the table, print user data in the required format.
     Go To Customers Page
-    Click Element    ((${table_row})[1]//td)[3]
-    Wait Until Element Is Visible    //input[@name="email"]    10s
-    ${fetched_email}    Get Element Attribute    //input[@name="email"]    value
-    ${expected_email}   Get From Dictionary    ${customer}    email
-    Should Be Equal     ${expected_email}    ${fetched_email}
-    Log To Console      ${fetched_email}
+    Wait Until Element Is Visible    ${table_row}
 
+    ${row_count}=    Get Element Count    ${table_row}
+    ${end}=          Evaluate    ${row_count} + 1
 
+    FOR    ${r}    IN RANGE    1    ${end}
+        ${name}=              Get Text    //table//tbody//tr[${r}]//td[2]//a
+        ${last_seen}=         Get Text    //table//tbody//tr[${r}]//td[3]
+        ${orders}=            Get Text    //table//tbody//tr[${r}]//td[4]
+        ${total_spent}=       Get Text    //table//tbody//tr[${r}]//td[5]
+        ${latest_purchase}=   Get Text    //table//tbody//tr[${r}]//td[6]
+        ${news}=              Get Element Attribute    //table//tbody//tr[${r}]//td[7]//*[name()="svg"]    aria-label
+        ${segment}=           Get Text    //table//tbody//tr[${r}]//td[8]
+
+        Log To Console    ====== User ${r} ======
+        Log To Console    Name: ${name}
+        Log To Console    Last seen: ${last_seen}
+        Log To Console    Orders: ${orders}
+        Log To Console    Total spent: ${total_spent}
+        Log To Console    Latest purchase: ${latest_purchase}
+        Log To Console    News: ${news}
+        Log To Console    Segment: ${segment}
+        Log To Console    [Continue with all available fields]
+        Log To Console    --------------------------------------------
+    END

@@ -12,8 +12,8 @@ URL = 'https://marmelab.com/react-admin-demo'
 USERNAME = 'demo'
 PASSWORD = 'demo'
 
-btn_Refresh = '//button[@aria-label="Refresh"]'
-loading_icon = '//a[@aria-label="Refresh"]'
-
+btn_refresh =   '//button[@aria-label="Refresh"]'
+loading_icon    =   '//div[span[contains(@class,"MuiCircularProgress-root")]]'
+table_selector  =   '//table//tbody//tr[1]//td[2]'
 
 

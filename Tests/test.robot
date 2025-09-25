@@ -1,6 +1,12 @@
 *** Settings ***
-Resource    ../Resources/App.resource
-Resource    ../Resources/CustomerPage.resource
+Library    SeleniumLibrary
+Library    Collections
+Library    String
+Library    ../Library/CustomLibrary.py
+Resource   ../Resources/App.resource
+Resource   ../Resources/CustomerPage.resource
+Variables  ../Variables/variables.py
+Variables  ../Variables/customerpage.py
 
 Suite Setup    Launch Browser
 # Test Teardown    Capture Page Screenshot
@@ -16,16 +22,36 @@ TEST-000001
     [Documentation]    Login to React Admin demo
     Login User
 
-TEST-000002
-    [Documentation]    Get API user and create in Customers
     ${customers}    Get Random Customers
-    
-    FOR    ${i}    IN    @{customers}
-        Go To Customers Page
-        Create Customer    ${i}
-        Verify Customer Input    ${i}
-        # Capture Page Screenshot
+    Go To Customers Page
+
+    ${Verified_Customers} =    Create List
+    Set Suite Variable    ${Verified_Customers}
+
+    FOR    ${customer}    IN    @{customers}
+        Create Customer    ${customer}
+        Verify Customer Input    ${customer}
     END
+
+    Log To Console    ${Verified_Customers}
+
+    ${total}=    Get Length    ${customers}
+    ${end}=      Evaluate    ${total} + 1
+    FOR    ${index}    IN RANGE    1    ${end}
+        ${customer_index}=    Evaluate    ${total} - ${index}
+        ${customer}=    Set Variable    ${customers}[${customer_index}]
+        Verify Customer Data    ${customer}    ${index}
+    END
+
+TEST-000002
+    ${customers}=    Get Random Customers    5    5   # start=5, limit=5 => users 6..10
+    Update Customer Table    ${customers}
+    # Sleep    500s
+
+TEST-000003
+    [Documentation]    TASK 4: Log table data for each row (Name, Last seen, Orders, etc.)
+    Get Table Row Data
+
 
 *** Keywords ***
 Launch Browser
