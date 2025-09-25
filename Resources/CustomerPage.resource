@@ -2,6 +2,7 @@
 Library    SeleniumLibrary
 Library    ../Library/CustomLibrary.py
 Library    Collections
+Library    String
 Variables  ../Variables/customerpage.py
 Resource   App.resource
 
@@ -132,6 +133,32 @@ Clear And Input Text
     Input Text       ${locator}    ${value}
 
 # TASK4
+Get Simple Name
+    [Arguments]    ${r}
+    # Prefer the last text node inside the link (avoids the leading avatar initial)
+    ${target}=    Set Variable    //table//tbody//tr[${r}]//td[2]//a//*[self::span or self::p][last()]
+    ${has}=       Run Keyword And Return Status    Page Should Contain Element    ${target}
+    IF    ${has}
+        ${name}=    Get Text    ${target}
+    ELSE
+        # Fallback: whole link text, keep only last line
+        ${raw}=      Get Text    //table//tbody//tr[${r}]//td[2]//a
+        ${lines}=    Split To Lines    ${raw}
+        ${name}=     Get From List    ${lines}    -1
+    END
+    RETURN    ${name}
+
+Get Segments
+    [Arguments]    ${r}
+    @{chips}=      Get WebElements    //table//tbody//tr[${r}]//td[8]//span[contains(@class,"MuiChip-label")]
+    ${segments}=   Create List
+    FOR    ${chip}    IN    @{chips}
+        ${txt}=    Get Text    ${chip}
+        Append To List    ${segments}    ${txt}
+    END
+    ${segment}=    Catenate    SEPARATOR=,     @{segments}
+    RETURN    ${segment}
+
 Get Table Row Data
     [Documentation]    TASK 4: For each row in the table, print user data in the required format.
     Go To Customers Page
@@ -141,13 +168,12 @@ Get Table Row Data
     ${end}=          Evaluate    ${row_count} + 1
 
     FOR    ${r}    IN RANGE    1    ${end}
-        ${name}=              Get Text    //table//tbody//tr[${r}]//td[2]//a
+        ${name}=              Get Simple Name    ${r}
         ${last_seen}=         Get Text    //table//tbody//tr[${r}]//td[3]
         ${orders}=            Get Text    //table//tbody//tr[${r}]//td[4]
         ${total_spent}=       Get Text    //table//tbody//tr[${r}]//td[5]
         ${latest_purchase}=   Get Text    //table//tbody//tr[${r}]//td[6]
 
-        # News icon may not exist on some rows — check first
         ${has_news}=    Run Keyword And Return Status    Page Should Contain Element    //table//tbody//tr[${r}]//td[7]//*[name()="svg"]
         IF    ${has_news}
             ${news}=    Get Element Attribute    //table//tbody//tr[${r}]//td[7]//*[name()="svg"]    aria-label
@@ -155,14 +181,7 @@ Get Table Row Data
             ${news}=    Set Variable    No
         END
 
-        # Collect segment chips (0..n), join with commas
-        @{chip_nodes}=    Get WebElements    //table//tbody//tr[${r}]//td[8]//span[contains(@class,"MuiChip-label")]
-        ${segments}=       Create List
-        FOR    ${chip}    IN    @{chip_nodes}
-            ${txt}=    Get Text    ${chip}
-            Append To List    ${segments}    ${txt}
-        END
-        ${segment}=    Catenate    SEPARATOR=,     @{segments}
+        ${segment}=    Get Segments    ${r}
 
         Log To Console    ====== User ${r} ======
         Log To Console    Name: ${name}
@@ -173,4 +192,51 @@ Get Table Row Data
         Log To Console    News: ${news}
         Log To Console    Segment: ${segment}
         Log To Console    --------------------------------------------
+    END
+Get Expense Report
+    [Documentation]    TASK 5: Analyze user spending (single page), print spenders, sum total, validate threshold.
+    Go To Customers Page
+    Wait Until Element Is Visible    ${table_row}
+
+    ${rows}=              Get Element Count    ${table_row}
+    ${total}=             Set Variable    0.0
+    ${counter}=           Set Variable    1
+
+    FOR    ${r}    IN RANGE    1    ${rows + 1}
+        # Clean name (uses your helper from Task 4)
+        ${name}=          Get Simple Name    ${r}
+
+        # Read and normalize currency
+        ${amount_txt}=    Get Text    //table//tbody//tr[${r}]//td[5]
+        ${clean_txt}=     Replace String    ${amount_txt}    $    ${EMPTY}
+        ${clean_txt}=     Replace String    ${clean_txt}    ,    ${EMPTY}
+        ${clean_txt}=     Strip String      ${clean_txt}
+        ${amount}=        Run Keyword If    '${clean_txt}' == ''    Set Variable    0    ELSE    Convert To Number    ${clean_txt}
+
+        # Display only users with spending > 0
+        IF    ${amount} > 0
+            Log To Console    ${counter}. ${name}: ${amount_txt}
+            ${counter}=       Evaluate    ${counter} + 1
+        END
+
+        # Accumulate total
+        ${total}=          Evaluate    float(${total}) + float(${amount})
+    END
+
+    # Banner total
+    ${total_fmt}=      Evaluate    "$" + format(float(${total}), ",.2f")
+    Log To Console     =========================
+    Log To Console     Total Customer Spending: ${total_fmt}
+    Log To Console     =========================
+
+    # Threshold validation (exact wording)
+    ${threshold}=      Set Variable    3500
+    ${meets}=          Evaluate    float(${total}) >= ${threshold}
+    ${thresh_fmt}=     Evaluate    "$" + format(float(${threshold}), ",.0f")
+
+    IF    ${meets}
+        Log To Console    PASS: Total Spending (${total_fmt}) meets minimum threshold (${thresh_fmt})
+    ELSE
+        Log To Console    FAIL: Total Spending (${total_fmt}) is below minimum (${thresh_fmt})
+        Fail    Total Spending (${total_fmt}) is below minimum (${thresh_fmt})
     END

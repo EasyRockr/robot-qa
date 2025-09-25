@@ -20,3 +20,6 @@ total_spent_selector = '//table//tbody//tr[1]//td[5]'
 latest_purchase_selector    =   '//table//tbody//tr[1]//td[6]'
 news_selector   =   '//table//tbody//tr[1]//td[7]//*[name()="svg"]'
 segment_selector    =   '//table//tbody//tr[1]//td[8]'
+
+next_page_btn = '//button[@aria-label="Next page"]'
+name_selector = '//table//tbody//tr[{r}]//td[2]//a'

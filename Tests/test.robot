@@ -5,8 +5,6 @@ Library    String
 Library    ../Library/CustomLibrary.py
 Resource   ../Resources/App.resource
 Resource   ../Resources/CustomerPage.resource
-Variables  ../Variables/variables.py
-Variables  ../Variables/customerpage.py
 
 Suite Setup    Launch Browser
 # Test Teardown    Capture Page Screenshot
@@ -21,6 +19,7 @@ ${PASSWORD}   demo
 TEST-000001
     [Documentation]    Login to React Admin demo
     Login User
+    Sleep    10s
 
     ${customers}    Get Random Customers
     Go To Customers Page
@@ -51,6 +50,11 @@ TEST-000002
 TEST-000003
     [Documentation]    TASK 4: Log table data for each row (Name, Last seen, Orders, etc.)
     Get Table Row Data
+
+TEST-000004
+    [Documentation]    TASK 5: Analyze user spending and validate threshold
+    Get Expense Report
+
 
 
 *** Keywords ***

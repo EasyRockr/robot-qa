@@ -7,7 +7,7 @@ class CustomLibrary:
     def get_random_customers(self, start=0, limit=5):
         resp = requests.get("https://jsonplaceholder.typicode.com/users", timeout=10)
         resp.raise_for_status()
-        customers = resp.json()[start:start+limit]  # <-- grab 6..10 with start=5, limit=5
+        customers = resp.json()[start:start+limit] 
         for c in customers:
             c["birthday"] = self.get_random_birthday()
             c["password"] = self.generate_password()
